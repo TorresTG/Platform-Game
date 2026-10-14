@@ -20,12 +20,17 @@ public class PlayerScript : MonoBehaviour
         {
             sprite.flipX = true;
             
-            rigidbody.linearVelocity = new Vector2(-2f,0);
+            rigidbody.linearVelocity = new Vector2(-2f,rigidbody.linearVelocity.y);
         }
         if (Input.GetKey(KeyCode.RightArrow))
         {
             sprite.flipX = false;
-            rigidbody.linearVelocity = new Vector2(2f,0);
+            rigidbody.linearVelocity = new Vector2(2f,rigidbody.linearVelocity.y);
+        }
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            sprite.flipX = false;
+            rigidbody.linearVelocity = new Vector2(0,4f);
         }
     }
 }
