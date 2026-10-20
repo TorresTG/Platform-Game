@@ -1,5 +1,5 @@
-using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerScript : MonoBehaviour
 {
@@ -9,6 +9,8 @@ public class PlayerScript : MonoBehaviour
     BoxCollider2D boxCollider;
     public LayerMask layerMask;
     Animator animator;
+
+    bool doubleJump;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -16,6 +18,7 @@ public class PlayerScript : MonoBehaviour
         rigidbody = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
         animator = GetComponent<Animator>();
+        doubleJump = false;
     }
 
     // Update is called once per frame
@@ -30,12 +33,12 @@ public class PlayerScript : MonoBehaviour
 
             if (Input.GetKey(KeyCode.LeftShift))
             {
-                rigidbody.linearVelocity = new Vector2(-6f,rigidbody.linearVelocity.y);
+                rigidbody.linearVelocity = new Vector2(-10f,rigidbody.linearVelocity.y);
                 animator.speed = 2f;
             }
             else
             {
-                rigidbody.linearVelocity = new Vector2(-3f,rigidbody.linearVelocity.y);
+                rigidbody.linearVelocity = new Vector2(-4f,rigidbody.linearVelocity.y);
                 animator.speed = 1f;
             }
             
@@ -48,12 +51,12 @@ public class PlayerScript : MonoBehaviour
             sprite.flipX = false;
             if (Input.GetKey(KeyCode.LeftShift))
             {
-                rigidbody.linearVelocity = new Vector2(6f,rigidbody.linearVelocity.y);
+                rigidbody.linearVelocity = new Vector2(10f,rigidbody.linearVelocity.y);
                 animator.speed = 2f;
             }
             else
             {
-                rigidbody.linearVelocity = new Vector2(3f,rigidbody.linearVelocity.y);
+                rigidbody.linearVelocity = new Vector2(4f,rigidbody.linearVelocity.y);
                 animator.speed = 1f;
             }    
         }
@@ -64,6 +67,13 @@ public class PlayerScript : MonoBehaviour
             if (isGrounded()){
                 sprite.flipX = false;
                 rigidbody.linearVelocity = new Vector2(0,4f);
+                doubleJump = true;
+            }
+            else if (doubleJump)
+            {
+                rigidbody.linearVelocity = new Vector2(0,4f);
+                doubleJump = false;
+                
             }
      
         }
@@ -77,6 +87,22 @@ public class PlayerScript : MonoBehaviour
         {
             animator.SetInteger("status",1);
         }
+        else if(rigidbody.linearVelocity.y > 0)
+        {
+            if(doubleJump)
+            {
+                animator.SetInteger("status",2);
+            }
+            else
+            {
+                animator.SetInteger("status",4);
+            }
+        }
+        else if(rigidbody.linearVelocity.y < 0)
+        {
+            animator.SetInteger("status",3);
+        }
+
     }
 
 
@@ -90,5 +116,17 @@ public class PlayerScript : MonoBehaviour
             0.1f,
             layerMask
              );
+    }
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.gameObject.tag == "Limite")
+        {
+            animator.SetTrigger("delete");
+        }
+    }
+
+    public void goToDelete()
+    {
+        SceneManager.LoadScene(0);
     }
 }
